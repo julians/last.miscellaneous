@@ -59,6 +59,9 @@ $max = null;
 
     <form action="" method="get">
         <p>
+            Enter your stuff here to receive yearly charts. They’ll probably take a while to load (20 seconds or so).
+        </p>
+        <p>
             <label for="username">Last.fm username</label>
             <br>
             <input type="text" name="username" value="<?php echo $username; ?>" placeholder="Your username" id="username">
