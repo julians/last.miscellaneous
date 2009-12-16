@@ -53,3 +53,8 @@ li {
     top: 0;
     left: 0;
 }
+
+.inBestOf {
+    color: #FF2863;
+    font-weight: bold;
+}

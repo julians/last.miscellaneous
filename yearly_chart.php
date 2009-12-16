@@ -2,6 +2,7 @@
 
 require_once("blah.php");
 require_once("user.class.php");
+require_once("bestof2009.php");
 
 date_default_timezone_set("Europe/Berlin");
 setlocale(LC_ALL, 'de_DE');
@@ -15,6 +16,7 @@ $list = $user->getWeeklyChartList();
 
 $artists = array();
 $max = 0;
+$bestofNames = array_keys($bestof);
 
 $years = array();
 for ($i=0; $i < count($list); $i++) {
@@ -90,7 +92,11 @@ $max = null;
             foreach ($artists as $key => $value) {
                 if (!$max) $max = $value;
                 echo "<li>";
-                print("<span class='playcount'>" . $value . "</span>");
+                print("<span class='playcount'>");
+                if ($chartyear == 2009 && in_array($key, $bestofNames)) {
+                    print("<span class='inBestOf' title='". number_format($bestof[$key]) ." scrobbles in 2009'>*</span>");
+                }
+                print($value."</span>");
                 print("<span class='artist'>" . $key . "</span>");
                 print("<div class='chartbar' style='width: ".(round($value/$max, 2)*100)."%'> </div>");
                 echo "</li>";
