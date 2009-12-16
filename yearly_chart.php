@@ -64,6 +64,9 @@ $max = null;
             Enter your stuff here to receive yearly charts. They’ll probably take a while to load (20 seconds or so).
         </p>
         <p>
+            The code for this can be be found at <a href="http://github.com/julians/last.miscellaneous">github.com/julians/last.miscellaneous</a>.
+        </p>
+        <p>
             <label for="username">Last.fm username</label>
             <br>
             <input type="text" name="username" value="<?php echo $username; ?>" placeholder="Your username" id="username">
