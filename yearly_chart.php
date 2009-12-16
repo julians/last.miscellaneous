@@ -61,7 +61,7 @@ $max = null;
 
     <form action="" method="get">
         <p>
-            Enter your stuff here to receive yearly charts. They’ll probably take a while to load (20 seconds or so).
+            Enter your stuff here to receive yearly charts. They’ll probably take a while to load (20 seconds or so). Also, I’m not entirely sure this works 100% ;)
         </p>
         <p>
             The code for this can be be found at <a href="http://github.com/julians/last.miscellaneous">github.com/julians/last.miscellaneous</a>.
