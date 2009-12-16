@@ -9,7 +9,7 @@ setlocale(LC_ALL, 'de_DE');
 ini_set('display_errors', 1);
 error_reporting(E_ERROR);
 
-$username = $_GET["user"] ? $_GET["user"] : "julians";
+$username = $_GET["username"] ? $_GET["username"] : "julians";
 $chartyear = intval($_GET["year"]) ? $_GET["year"] : 2009;
 $user = new User($username);
 $list = $user->getWeeklyChartList();
