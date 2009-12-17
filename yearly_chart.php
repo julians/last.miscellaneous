@@ -15,16 +15,20 @@ $user = new User($username);
 $list = $user->getWeeklyChartList();
 
 $artists = array();
+$weekly = array();
+$weeks = 0;
 $max = 0;
 $bestofNames = array_keys($bestof);
 
 $years = array();
 for ($i=0; $i < count($list); $i++) {
     $year = strftime("%Y", $list[$i]->to);
+    $week = intval(strftime("%V", $list[$i]->to));
     $years[$year] = true;
     $year = intval($year);
     if ($year == $chartyear) {
         $chart = $user->getWeeklyArtistChart($list[$i]->from, $list[$i]->to);
+        $weeks++;
         if ($chart && count($chart) > 1) {
             for ($j=0; $j < count($chart); $j++) { 
                 $artist = $chart[$j];
@@ -33,6 +37,7 @@ for ($i=0; $i < count($list); $i++) {
                 } else {
                     $artists[$artist->name] = $artist->playcount;
                 }
+                $weekly[$artist->name][$week] = $artist->playcount;
             }
         } else if ($chart) {
             if ($artists[$chart->name]) {
@@ -40,6 +45,7 @@ for ($i=0; $i < count($list); $i++) {
             } else {
                 $artists[$chart->name] = $chart->playcount;
             }
+            $weekly[$chart->name][$week] = $chart->playcount;
         }
     }
 }
@@ -90,17 +96,36 @@ $max = null;
         <input type="submit" name="gogogo" value="Make it so!" id="gogogo">
     </form>
 
+    <img src=<?php echo $max ?>&amp;cht=ls<?php echo $dataString?>&amp;chg=<?php echo str_replace(",", ".", round(100/count($count)*52, 4)) ?>,0,1,0,-<?php echo str_replace(",", ".", round(100/count($count)*$firstWeek, 4)) ?>">
+
     <ul>
         <?php
             foreach ($artists as $key => $value) {
                 if (!$max) $max = $value;
+                
+                $maxScrobbles = 0;
+                $imgSrc = "http://chart.apis.google.com/chart?";
+                $imgSrc .= "chs=104x16&amp;cht=ls&amp;chco=FF2863&amp;chf=bg,s,dddddd00&amp;chd=t:";
+                for ($i=0; $i < $weeks; $i++) {
+                    if ($i > 0) $imgSrc .= ",";
+                    if (isset($weekly[$key][$i])) {
+                        $imgSrc .= $weekly[$key][$i];
+                        if ($weekly[$key][$i] > $maxScrobbles) $maxScrobbles = $weekly[$key][$i];
+                    } else {
+                        $imgSrc .= "0";
+                    }
+                }
+                $imgSrc .= "&amp;chds=0,".$maxScrobbles;
                 echo "<li>";
                 print("<span class='playcount'>");
                 if ($chartyear == 2009 && in_array($key, $bestofNames)) {
                     print("<span class='inBestOf' title='". number_format($bestof[$key]) ." scrobbles in 2009'>*</span>");
                 }
                 print($value."</span>");
-                print("<span class='artist'>" . $key . "</span>");
+                print("<span class='artist'>");
+                print($key);
+                print(" <img src='".$imgSrc."'>");
+                print("</span>");
                 print("<div class='chartbar' style='width: ".(round($value/$max, 2)*100)."%'> </div>");
                 echo "</li>";
             }

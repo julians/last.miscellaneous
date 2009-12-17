@@ -43,6 +43,13 @@ li {
     position: absolute;
     left: 3.5em;
     top: 0.25em;
+    padding-right: 109px;
+}
+
+.artist img {
+    position: absolute;
+    right: 0;
+    top: 0;
 }
 
 .chartbar {
