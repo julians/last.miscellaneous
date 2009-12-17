@@ -99,6 +99,14 @@ $max = null;
             <input type="submit" name="gogogo" value="Make it so!" id="gogogo">
         </p>
     </form>
+    
+    <?php
+        if ($username == "mxcl") {
+            echo "<p><strong>";
+            echo "You’ve been bumped up the queue. If you feel this did not improve things, the&nbsp;placebo&nbsp;effect isn’t working.";
+            echo "</strong><p>";
+        }
+    ?>
 
     <p title="That’s an average of <?php echo number_format($total/count($artists)); ?> scrobbles per artist.">
         <?php echo $username; ?> collected <?php echo number_format($total); ?> scrobbles by <?php echo number_format(count($artists)); ?> artists in <?php echo $chartyear; ?>. Here they are:
