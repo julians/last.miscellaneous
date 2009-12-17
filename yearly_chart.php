@@ -54,6 +54,7 @@ for ($i=0; $i < count($list); $i++) {
 }
 
 arsort($artists);
+krsort($years);
 $max = null;
 ?>
 
@@ -68,22 +69,20 @@ $max = null;
 </head>
 <body>
 
+    <p>
+        Enter your stuff here to see your yearly charts. They’ll probably take a while to load (20 seconds or so). Also, I’m not entirely sure this works 100%. The code for this can be be found at <a href="http://github.com/julians/last.miscellaneous">github.com/julians/last.miscellaneous</a>.
+    </p>
+    
     <form action="" method="get">
-        <p>
-            Enter your stuff here to receive yearly charts. They’ll probably take a while to load (20 seconds or so). Also, I’m not entirely sure this works 100% ;)
-        </p>
-        <p>
-            The code for this can be be found at <a href="http://github.com/julians/last.miscellaneous">github.com/julians/last.miscellaneous</a>.
-        </p>
-        <p>
-            <label for="username">Last.fm username</label>
+        <p class="blah first">
+            <label for="username">Last.fm username:</label>
             <br>
             <input type="text" name="username" value="<?php echo $username; ?>" placeholder="Your username" id="username">
         </p>
         <?php
             if (count($years)) {
-                echo "<p>";
-                echo '<label for="year">Year</label>';
+                echo "<p class='blah'>";
+                echo '<label for="year">Year:</label>';
                 echo '<br>';
                 echo '<select name="year" id="year">';
                 foreach ($years as $key => $value) {
@@ -96,11 +95,13 @@ $max = null;
                 echo '</p>';
             }
         ?>
-        <input type="submit" name="gogogo" value="Make it so!" id="gogogo">
+        <p>
+            <input type="submit" name="gogogo" value="Make it so!" id="gogogo">
+        </p>
     </form>
 
-    <p>
-        You scrobbled <?php echo number_format($total); ?> songs in <?php echo $chartyear; ?>.
+    <p title="That’s an average of <?php echo number_format($total/count($artists)); ?> scrobbles per artist.">
+        <?php echo $username; ?> collected <?php echo number_format($total); ?> scrobbles by <?php echo number_format(count($artists)); ?> artists in <?php echo $chartyear; ?>. Here they are:
     </p>
 
     <ul>
