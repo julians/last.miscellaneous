@@ -130,7 +130,7 @@ $max = null;
                 print(number_format($value)."</span>");
                 print("<span class='artist'>");
                 print($key);
-                print(" <img src='".$imgSrc."'>");
+                print(" <img src='".$imgSrc."' title='The scrobble high for ".$key." was ".$maxScrobbles." times in one week.'>");
                 print("</span>");
                 print("<div class='chartbar' style='width: ".(round($value/$max, 2)*100)."%'> </div>");
                 echo "</li>";
