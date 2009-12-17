@@ -5,7 +5,7 @@ require_once("user.class.php");
 require_once("bestof2009.php");
 
 date_default_timezone_set("Europe/Berlin");
-setlocale(LC_ALL, 'de_DE');
+setlocale(LC_ALL, 'en_GB');
 ini_set('display_errors', 1);
 error_reporting(E_ERROR);
 
@@ -19,6 +19,7 @@ $weekly = array();
 $weeks = 0;
 $max = 0;
 $bestofNames = array_keys($bestof);
+$total = 0;
 
 $years = array();
 for ($i=0; $i < count($list); $i++) {
@@ -38,6 +39,7 @@ for ($i=0; $i < count($list); $i++) {
                     $artists[$artist->name] = $artist->playcount;
                 }
                 $weekly[$artist->name][$week] = $artist->playcount;
+                $total += $artist->playcount;
             }
         } else if ($chart) {
             if ($artists[$chart->name]) {
@@ -46,6 +48,7 @@ for ($i=0; $i < count($list); $i++) {
                 $artists[$chart->name] = $chart->playcount;
             }
             $weekly[$chart->name][$week] = $chart->playcount;
+            $total += $chart->playcount;
         }
     }
 }
@@ -96,7 +99,9 @@ $max = null;
         <input type="submit" name="gogogo" value="Make it so!" id="gogogo">
     </form>
 
-    <img src=<?php echo $max ?>&amp;cht=ls<?php echo $dataString?>&amp;chg=<?php echo str_replace(",", ".", round(100/count($count)*52, 4)) ?>,0,1,0,-<?php echo str_replace(",", ".", round(100/count($count)*$firstWeek, 4)) ?>">
+    <p>
+        You scrobbled <?php echo number_format($total); ?> songs in <?php echo $chartyear; ?>.
+    </p>
 
     <ul>
         <?php
@@ -117,11 +122,11 @@ $max = null;
                 }
                 $imgSrc .= "&amp;chds=0,".$maxScrobbles;
                 echo "<li>";
-                print("<span class='playcount'>");
+                print("<span class='playcount' title='That’s ".round($value/$total, 4)."% of your total scrobbles this year.'>");
                 if ($chartyear == 2009 && in_array($key, $bestofNames)) {
-                    print("<span class='inBestOf' title='". number_format($bestof[$key]) ." scrobbles in 2009'>*</span>");
+                    print("<span class='inBestOf' title='In Last.fm’s ‘Best of 2009’ with ". number_format($bestof[$key]) ." total scrobbles'>*</span>");
                 }
-                print($value."</span>");
+                print(number_format($value)."</span>");
                 print("<span class='artist'>");
                 print($key);
                 print(" <img src='".$imgSrc."'>");
