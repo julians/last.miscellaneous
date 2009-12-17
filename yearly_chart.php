@@ -103,7 +103,7 @@ $max = null;
     <?php
         if ($username == "mxcl") {
             echo "<p><strong>";
-            echo "You’ve been bumped up the queue. If you feel this did not improve things, the&nbsp;placebo&nbsp;effect isn’t working.";
+            echo "You’re Max! You’ve been bumped up the queue. If you feel this did not improve things, the&nbsp;placebo&nbsp;effect isn’t working.";
             echo "</strong><p>";
         }
     ?>
