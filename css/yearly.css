@@ -68,14 +68,14 @@ li {
     left: 0.5em;
     top: 3px;
     text-align: right;
-    width: 2.5em;
+    width: 3em;
     color: #999;
 }
 
 .artist {
     z-index: 2;
     position: absolute;
-    left: 3.5em;
+    left: 4em;
     top: 0;
     padding: 3px 109px 0 0;
 }
