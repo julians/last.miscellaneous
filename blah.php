@@ -39,6 +39,10 @@
     
     class Util
     {
+        static public function map ($x, $x0, $x1, $y0, $y1)
+        {
+            return $y0+(($x-$x0)*(($y1-$y0)/($x1-$x0)));
+        }
     }
 
 // convert data to Google Chart API's simple, text or extended encoding
