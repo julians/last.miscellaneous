@@ -120,7 +120,7 @@ $max = null;
                 $maxScrobbles = 0;
                 $imgSrc = "http://chart.apis.google.com/chart?";
                 $imgSrc .= "chs=104x16&amp;cht=ls&amp;chco=FF2863&amp;chf=bg,s,dddddd00&amp;chd=t:";
-                for ($i=0; $i < $weeks; $i++) {
+                for ($i=0; $i <= $weeks; $i++) {
                     if ($i > 0) $imgSrc .= ",";
                     if (isset($weekly[$key][$i])) {
                         $imgSrc .= $weekly[$key][$i];
