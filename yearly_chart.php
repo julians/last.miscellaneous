@@ -1,5 +1,4 @@
 <?php
-
 require_once("blah.php");
 require_once("user.class.php");
 require_once("bestof2009.php");
@@ -17,7 +16,7 @@ $list = $user->getWeeklyChartList();
 $artists = array();
 $weekly = array();
 $weeks = 0;
-$max = 0;
+$weekMax = 0;
 $bestofNames = array_keys($bestof);
 $total = 0;
 
@@ -40,6 +39,7 @@ for ($i=0; $i < count($list); $i++) {
                 }
                 $weekly[$artist->name][$week] = $artist->playcount;
                 $total += $artist->playcount;
+                if ($artist->playcount > $weekMax) $weekMax = $artist->playcount;
             }
         } else if ($chart) {
             if ($artists[$chart->name]) {
@@ -119,7 +119,8 @@ $max = null;
                 
                 $maxScrobbles = 0;
                 $imgSrc = "http://chart.apis.google.com/chart?";
-                $imgSrc .= "chs=104x16&amp;cht=ls&amp;chco=FF2863&amp;chf=bg,s,dddddd00&amp;chd=t:";
+                $imgSrc .= "chs=104x16&amp;cht=ls";
+                $imgSrc .="&amp;chd=t:";
                 for ($i=0; $i <= $weeks; $i++) {
                     if ($i > 0) $imgSrc .= ",";
                     if (isset($weekly[$key][$i])) {
@@ -130,6 +131,9 @@ $max = null;
                     }
                 }
                 $imgSrc .= "&amp;chds=0,".$maxScrobbles;
+                $imgSrc .= "&amp;chf=bg,s,dddddd00";
+                $imgSrc  .= "&amp;chco=FF2863";
+                $imgSrc .= dechex(Util::map($maxScrobbles, 0, $weekMax, 50, 255));
                 echo "<li>";
                 print("<span class='playcount' title='That’s ".round($value/$total, 4)."% of your total scrobbles this year.'>");
                 if ($chartyear == 2009 && in_array($key, $bestofNames)) {
