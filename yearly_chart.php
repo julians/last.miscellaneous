@@ -19,6 +19,11 @@ $weeks = 0;
 $weekMax = 0;
 $bestofNames = array_keys($bestof);
 $total = 0;
+$weeklyCounts = array();
+
+for ($i=0; $i < 52; $i++) { 
+    $weeklyCounts[$i] = 0;    
+}
 
 $years = array();
 for ($i=0; $i < count($list); $i++) {
@@ -40,6 +45,7 @@ for ($i=0; $i < count($list); $i++) {
                 $weekly[$artist->name][$week] = $artist->playcount;
                 $total += $artist->playcount;
                 if ($artist->playcount > $weekMax) $weekMax = $artist->playcount;
+                $weeklyCounts[$week-1] += $artist->playcount;
             }
         } else if ($chart) {
             if ($artists[$chart->name]) {
@@ -49,6 +55,8 @@ for ($i=0; $i < count($list); $i++) {
             }
             $weekly[$chart->name][$week] = $chart->playcount;
             $total += $chart->playcount;
+            if ($chart->playcount > $weekMax) $weekMax = $chart->playcount;
+            $weeklyCounts[$week-1] += $chart->playcount;
         }
     }
 }
@@ -69,7 +77,7 @@ $max = null;
 </head>
 <body>
 
-    <p>
+    <p id="intro">
         Enter your stuff here to see your yearly charts. They’ll probably take a while to load (20 seconds or so). Also, I’m not entirely sure this works 100%. The code for this can be be found at <a href="http://github.com/julians/last.miscellaneous">github.com/julians/last.miscellaneous</a>.
     </p>
     
@@ -109,9 +117,28 @@ $max = null;
     ?>
 
     <p title="That’s an average of <?php echo number_format($total/count($artists)); ?> scrobbles per artist.">
-        <?php echo $username; ?> collected <?php echo number_format($total); ?> scrobbles by <?php echo number_format(count($artists)); ?> artists in <?php echo $chartyear; ?>. Here they are:
+        <?php echo $username; ?> collected <?php echo number_format($total); ?> scrobbles by <?php echo number_format(count($artists)); ?> artists in <?php echo $chartyear; ?>. Here they are:    
+    <?php
+        $maxScrobbles = 0;
+        $imgSrc = "http://chart.apis.google.com/chart?";
+        $imgSrc .= "chs=104x16&amp;cht=ls";
+        $imgSrc .="&amp;chd=t:";
+        for ($i=0; $i < count($weeklyCounts); $i++) {
+            if ($i > 0) $imgSrc .= ",";
+            if ($weeklyCounts[$i]) {
+                $imgSrc .= $weeklyCounts[$i];
+                if ($weeklyCounts[$i] > $maxScrobbles) $maxScrobbles = $weeklyCounts[$i];
+            } else {
+                $imgSrc .= "0";
+            }
+        }
+        $imgSrc .= "&amp;chds=0,".$maxScrobbles;
+        $imgSrc .= "&amp;chf=bg,s,dddddd00";
+        $imgSrc  .= "&amp;chco=FF2863";
+        print(" <img src='".$imgSrc."' title='The scrobble high for ".$chartyear." was ".$maxScrobbles." times in one week.' width='104' height='16'>");    
+    ?>
     </p>
-
+    
     <ul>
         <?php
             foreach ($artists as $key => $value) {
@@ -119,7 +146,7 @@ $max = null;
                 
                 $maxScrobbles = 0;
                 $imgSrc = "http://chart.apis.google.com/chart?";
-                $imgSrc .= "chs=104x16&amp;cht=ls";
+                $imgSrc .= "chs=104x24&amp;cht=ls";
                 $imgSrc .="&amp;chd=t:";
                 for ($i=0; $i <= $weeks; $i++) {
                     if ($i > 0) $imgSrc .= ",";
@@ -130,10 +157,10 @@ $max = null;
                         $imgSrc .= "0";
                     }
                 }
-                $imgSrc .= "&amp;chds=0,".$maxScrobbles;
+                $imgSrc .= "&amp;chds=0,".$weekMax;
                 $imgSrc .= "&amp;chf=bg,s,dddddd00";
                 $imgSrc  .= "&amp;chco=FF2863";
-                $imgSrc .= dechex(Util::map($maxScrobbles, 0, $weekMax, 50, 255));
+                //$imgSrc .= dechex(Util::map($maxScrobbles, 0, $weekMax, 50, 255));
                 echo "<li>";
                 print("<span class='playcount' title='That’s ".round($value/$total, 4)."% of your total scrobbles this year.'>");
                 if ($chartyear == 2009 && in_array($key, $bestofNames)) {
@@ -142,7 +169,9 @@ $max = null;
                 print(number_format($value)."</span>");
                 print("<span class='artist'>");
                 print($key);
-                print(" <img src='".$imgSrc."' title='The scrobble high for ".$key." was ".$maxScrobbles." times in one week.'>");
+                if ($value > 9) {
+                    print(" <img src='".$imgSrc."' title='The scrobble high for ".$key." was ".$maxScrobbles." times in one week.' width='104' height='24'>");
+                }
                 print("</span>");
                 print("<div class='chartbar' style='width: ".(round($value/$max, 2)*100)."%'> </div>");
                 echo "</li>";

@@ -8,7 +8,10 @@ body {
 
 p {
     margin: 0 0 1.2em 0;
-    max-width: 50em;
+}
+
+#intro {
+    max-width: 50em;    
 }
 
 form {
@@ -83,7 +86,7 @@ li {
 .artist img {
     position: absolute;
     right: 0;
-    top: 0;
+    bottom: 0;
 }
 
 .chartbar {
