@@ -168,7 +168,7 @@ $max = null;
                 }
                 print(number_format($value)."</span>");
                 print("<span class='artist'>");
-                print($key);
+                print("<a href='http://www.last.fm/music/" . urlencode($key) ."'>" . $key . "</a>");
                 if ($value > 9) {
                     print(" <img src='".$imgSrc."' title='The scrobble high for ".$key." was ".$maxScrobbles." times in one week.' width='104' height='24'>");
                 }
