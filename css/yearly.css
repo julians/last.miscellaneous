@@ -54,6 +54,15 @@ ul {
     color: #333;
 }
 
+ul a {
+    color: #333;
+    text-decoration: none;
+}
+
+ul a:hover {
+    text-decoration: underline;
+}
+
 li {
     margin: 0;
     padding: 0;
