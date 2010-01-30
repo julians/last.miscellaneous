@@ -5,8 +5,6 @@ require_once("bestof2009.php");
 
 date_default_timezone_set("Europe/Berlin");
 setlocale(LC_ALL, 'en_GB');
-ini_set('display_errors', 1);
-error_reporting(E_ERROR);
 
 $username = $_GET["username"] ? $_GET["username"] : "julians";
 $chartyear = intval($_GET["year"]) ? $_GET["year"] : 2009;
@@ -27,36 +25,28 @@ for ($i=0; $i < 52; $i++) {
 
 $years = array();
 for ($i=0; $i < count($list); $i++) {
-    $year = strftime("%Y", $list[$i]->to);
-    $week = intval(strftime("%V", $list[$i]->to));
+    $year = intval(strftime("%Y", $list[$i]->to));
+    $week = intval(strftime("%U", $list[$i]->to));
     $years[$year] = true;
-    $year = intval($year);
     if ($year == $chartyear) {
         $chart = $user->getWeeklyArtistChart($list[$i]->from, $list[$i]->to);
         $weeks++;
-        if ($chart && count($chart) > 1) {
-            for ($j=0; $j < count($chart); $j++) { 
-                $artist = $chart[$j];
-                if ($artists[$artist->name]) {
-                    $artists[$artist->name] += $artist->playcount;
-                } else {
-                    $artists[$artist->name] = $artist->playcount;
-                }
-                $weekly[$artist->name][$week] = $artist->playcount;
-                $total += $artist->playcount;
-                if ($artist->playcount > $weekMax) $weekMax = $artist->playcount;
-                $weeklyCounts[$week-1] += $artist->playcount;
+        for ($j=0; $j < count($chart); $j++) { 
+            $artist = $chart[$j];
+            $playcount = intval($artist->playcount);
+            if (!isset($artists[$artist->name])) {
+                $artists[$artist->name] = array(
+                    'total' => 0,
+                    'week' => array_fill(1, 52, 0),
+                );
             }
-        } else if ($chart) {
-            if ($artists[$chart->name]) {
-                $artists[$chart->name] += $chart->playcount;
-            } else {
-                $artists[$chart->name] = $chart->playcount;
-            }
-            $weekly[$chart->name][$week] = $chart->playcount;
-            $total += $chart->playcount;
-            if ($chart->playcount > $weekMax) $weekMax = $chart->playcount;
-            $weeklyCounts[$week-1] += $chart->playcount;
+            $artists[$artist->name]['total'] += $playcount;
+            $artists[$artist->name]['week'][$week] = $playcount;
+            
+            $weekly[$artist->name][$week] = $playcount;
+            $total += $playcount;
+            if ($playcount > $weekMax) $weekMax = $playcount;
+            $weeklyCounts[$week-1] += $playcount;
         }
     }
 }
@@ -142,38 +132,34 @@ $max = null;
     <ul>
         <?php
             foreach ($artists as $key => $value) {
-                if (!$max) $max = $value;
+                if (!$max) $max = $value['total'];
                 
                 $maxScrobbles = 0;
                 $imgSrc = "http://chart.apis.google.com/chart?";
                 $imgSrc .= "chs=104x24&amp;cht=ls";
                 $imgSrc .="&amp;chd=t:";
-                for ($i=0; $i <= $weeks; $i++) {
-                    if ($i > 0) $imgSrc .= ",";
-                    if (isset($weekly[$key][$i])) {
-                        $imgSrc .= $weekly[$key][$i];
-                        if ($weekly[$key][$i] > $maxScrobbles) $maxScrobbles = $weekly[$key][$i];
-                    } else {
-                        $imgSrc .= "0";
-                    }
+                for ($i=1; $i <= 52; $i++) {
+                    if ($i > 1) $imgSrc .= ",";
+                    $imgSrc .= $value['week'][$i];
+                    if ($value['week'][$i] > $maxScrobbles) $maxScrobbles = $value['week'][$i];
                 }
                 $imgSrc .= "&amp;chds=0,".$weekMax;
                 $imgSrc .= "&amp;chf=bg,s,dddddd00";
                 $imgSrc  .= "&amp;chco=FF2863";
                 //$imgSrc .= dechex(Util::map($maxScrobbles, 0, $weekMax, 50, 255));
                 echo "<li>";
-                print("<span class='playcount' title='That’s ".round($value/$total, 4)."% of your total scrobbles this year.'>");
+                print("<span class='playcount' title='That’s ".round($value['total']/$total, 4)."% of your total scrobbles this year.'>");
                 if ($chartyear == 2009 && in_array($key, $bestofNames)) {
                     print("<span class='inBestOf' title='In Last.fm’s ‘Best of 2009’ with ". number_format($bestof[$key]) ." total scrobbles'>*</span>");
                 }
-                print(number_format($value)."</span>");
+                print(number_format($value['total'])."</span>");
                 print("<span class='artist'>");
                 print("<a href='http://www.last.fm/music/" . urlencode($key) ."'>" . $key . "</a>");
-                if ($value > 9) {
+                if ($value['total'] > 9) {
                     print(" <img src='".$imgSrc."' title='The scrobble high for ".$key." was ".$maxScrobbles." times in one week.' width='104' height='24'>");
                 }
                 print("</span>");
-                print("<div class='chartbar' style='width: ".(round($value/$max, 2)*100)."%'> </div>");
+                print("<div class='chartbar' style='width: ".(round($value['total']/$max, 2)*100)."%'> </div>");
                 echo "</li>";
             }
         ?>

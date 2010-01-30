@@ -84,17 +84,23 @@ class User {
     
     public function getWeeklyArtistChart ($from = null, $to = null)
     {
-        return $this->getWeeklyChart("artist", $from, $to);
+        $chart = $this->getWeeklyChart("artist", $from, $to);
+        if (!is_array($chart)) $chart = array($chart);
+        return $chart;
     }
     
     public function getWeeklyAlbumChart ($from = null, $to = null)
     {
-        return $this->getWeeklyChart("album", $from, $to);
+        $chart = $this->getWeeklyChart("album", $from, $to);
+        if (!is_array($chart)) $chart = array($chart);
+        return $chart;
     }
     
     public function getWeeklyTrackChart ($from = null, $to = null)
     {
-        return $this->getWeeklyChart("track", $from, $to);
+        $chart = $this->getWeeklyChart("track", $from, $to);
+        if (!is_array($chart)) $chart = array($chart);
+        return $chart;
     }
     
     public function getWeeklyChart ($type = "artist", $from = null, $to = null)
