@@ -41,7 +41,7 @@ for ($i=0; $i < count($list); $i++) {
             }
             $artists[$artist->name]['total'] += $playcount;
             $artists[$artist->name]['week'][$week] = $playcount;
-            if ($artists[$artist->name]['weekMax'] > $playcount) $artists[$artist->name]['weekMax'] = $playcount;
+            if ($artists[$artist->name]['weekMax'] < $playcount) $artists[$artist->name]['weekMax'] = $playcount;
             
             $total += $playcount;
             if ($playcount > $weekMax) $weekMax = $playcount;
@@ -125,7 +125,7 @@ $max = $max['total'];
         $imgSrc .= "&amp;chds=0,".$maxScrobbles;
         $imgSrc .= "&amp;chf=bg,s,dddddd00";
         $imgSrc  .= "&amp;chco=FF2863";
-        print(" <img src='".$imgSrc."' title='The scrobble high for ".$chartyear." was ".$maxScrobbles." times in one week.' width='104' height='16'>");    
+        print(" <img src='".$imgSrc."' title='The scrobble high for ".$chartyear." was ".$value['weekMax']." times in one week.' width='104' height='16'>");    
     ?>
     </p>
     
