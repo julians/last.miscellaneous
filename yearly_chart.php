@@ -38,12 +38,13 @@ for ($i=0; $i < count($list); $i++) {
                 $artists[$artist->name] = array(
                     'total' => 0,
                     'week' => array_fill(1, 52, 0),
+                    'weekMax' => 0,
                 );
             }
             $artists[$artist->name]['total'] += $playcount;
             $artists[$artist->name]['week'][$week] = $playcount;
+            if ($artists[$artist->name]['weekMax'] > $playcount) $artists[$artist->name]['weekMax'] = $playcount;
             
-            $weekly[$artist->name][$week] = $playcount;
             $total += $playcount;
             if ($playcount > $weekMax) $weekMax = $playcount;
             $weeklyCounts[$week-1] += $playcount;
@@ -53,7 +54,8 @@ for ($i=0; $i < count($list); $i++) {
 
 arsort($artists);
 krsort($years);
-$max = null;
+$max = reset($artists);
+$max = $max['total'];
 ?>
 
 <!DOCTYPE html>
@@ -132,16 +134,12 @@ $max = null;
     <ul>
         <?php
             foreach ($artists as $key => $value) {
-                if (!$max) $max = $value['total'];
-                
-                $maxScrobbles = 0;
                 $imgSrc = "http://chart.apis.google.com/chart?";
                 $imgSrc .= "chs=104x24&amp;cht=ls";
                 $imgSrc .="&amp;chd=t:";
                 for ($i=1; $i <= 52; $i++) {
                     if ($i > 1) $imgSrc .= ",";
                     $imgSrc .= $value['week'][$i];
-                    if ($value['week'][$i] > $maxScrobbles) $maxScrobbles = $value['week'][$i];
                 }
                 $imgSrc .= "&amp;chds=0,".$weekMax;
                 $imgSrc .= "&amp;chf=bg,s,dddddd00";
@@ -156,7 +154,7 @@ $max = null;
                 print("<span class='artist'>");
                 print("<a href='http://www.last.fm/music/" . urlencode($key) ."'>" . $key . "</a>");
                 if ($value['total'] > 9) {
-                    print(" <img src='".$imgSrc."' title='The scrobble high for ".$key." was ".$maxScrobbles." times in one week.' width='104' height='24'>");
+                    print(" <img src='".$imgSrc."' title='The scrobble high for ".$key." was ".$value['weekMax']." times in one week.' width='104' height='24'>");
                 }
                 print("</span>");
                 print("<div class='chartbar' style='width: ".(round($value['total']/$max, 2)*100)."%'> </div>");
