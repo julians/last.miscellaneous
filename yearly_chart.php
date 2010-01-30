@@ -15,13 +15,8 @@ $artists = array();
 $weekly = array();
 $weeks = 0;
 $weekMax = 0;
-$bestofNames = array_keys($bestof);
 $total = 0;
-$weeklyCounts = array();
-
-for ($i=0; $i < 52; $i++) { 
-    $weeklyCounts[$i] = 0;    
-}
+$weeklyCounts = array_fill(1, 52, 0);
 
 $years = array();
 for ($i=0; $i < count($list); $i++) {
@@ -40,6 +35,9 @@ for ($i=0; $i < count($list); $i++) {
                     'week' => array_fill(1, 52, 0),
                     'weekMax' => 0,
                 );
+                if ($year == 2009 && isset($bestof[$artist->name])) {
+                    $artists[$artist->name]['bestOf'] = $bestof[$artist->name];
+                }
             }
             $artists[$artist->name]['total'] += $playcount;
             $artists[$artist->name]['week'][$week] = $playcount;
@@ -147,8 +145,8 @@ $max = $max['total'];
                 //$imgSrc .= dechex(Util::map($maxScrobbles, 0, $weekMax, 50, 255));
                 echo "<li>";
                 print("<span class='playcount' title='That’s ".round($value['total']/$total, 4)."% of your total scrobbles this year.'>");
-                if ($chartyear == 2009 && in_array($key, $bestofNames)) {
-                    print("<span class='inBestOf' title='In Last.fm’s ‘Best of 2009’ with ". number_format($bestof[$key]) ." total scrobbles'>*</span>");
+                if (isset($value['bestOf'])) {
+                    print("<span class='inBestOf' title='In Last.fm’s ‘Best of 2009’ at position ".$value['bestOf']['position']." with ". number_format($value['bestOf']['playcount']) ." total scrobbles'>*</span>");
                 }
                 print(number_format($value['total'])."</span>");
                 print("<span class='artist'>");
