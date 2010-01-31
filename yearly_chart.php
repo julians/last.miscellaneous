@@ -6,15 +6,15 @@ require_once("bestof2009.php");
 date_default_timezone_set("Europe/Berlin");
 setlocale(LC_ALL, 'en_GB');
 
-$username = $_GET["username"] ? $_GET["username"] : "julians";
-$chartyear = intval($_GET["year"]) ? $_GET["year"] : 2009;
+$username = isset($_GET["username"]) ? $_GET["username"] : "julians";
+$chartyear = isset($_GET["year"]) && intval($_GET["year"]) ? intval($_GET["year"]) : 2009;
 $user = new User($username);
 $list = $user->getWeeklyChartList();
 
 $artists = array();
 $weekly = array();
 $weeks = 0;
-$weekMax = 0;
+$weekMaxByOneArtist = 0;
 $total = 0;
 $weeklyCounts = array_fill(1, 52, 0);
 
@@ -44,8 +44,8 @@ for ($i=0; $i < count($list); $i++) {
             if ($artists[$artist->name]['weekMax'] < $playcount) $artists[$artist->name]['weekMax'] = $playcount;
             
             $total += $playcount;
-            if ($playcount > $weekMax) $weekMax = $playcount;
-            $weeklyCounts[$week-1] += $playcount;
+            if ($playcount > $weekMaxByOneArtist) $weekMaxByOneArtist = $playcount;
+            $weeklyCounts[$week] += $playcount;
         }
     }
 }
@@ -113,19 +113,15 @@ $max = $max['total'];
         $imgSrc = "http://chart.apis.google.com/chart?";
         $imgSrc .= "chs=104x16&amp;cht=ls";
         $imgSrc .="&amp;chd=t:";
-        for ($i=0; $i < count($weeklyCounts); $i++) {
-            if ($i > 0) $imgSrc .= ",";
-            if ($weeklyCounts[$i]) {
-                $imgSrc .= $weeklyCounts[$i];
-                if ($weeklyCounts[$i] > $maxScrobbles) $maxScrobbles = $weeklyCounts[$i];
-            } else {
-                $imgSrc .= "0";
-            }
+        for ($i=1; $i < count($weeklyCounts)+1; $i++) {
+            if ($i > 1) $imgSrc .= ",";
+            $imgSrc .= $weeklyCounts[$i];
+            if ($weeklyCounts[$i] > $maxScrobbles) $maxScrobbles = $weeklyCounts[$i];
         }
         $imgSrc .= "&amp;chds=0,".$maxScrobbles;
         $imgSrc .= "&amp;chf=bg,s,dddddd00";
         $imgSrc  .= "&amp;chco=FF2863";
-        print(" <img src='".$imgSrc."' title='The scrobble high for ".$chartyear." was ".$value['weekMax']." times in one week.' width='104' height='16'>");    
+        print(" <img src='".$imgSrc."' title='The scrobble high for ".$chartyear." was ".$maxScrobbles." times in one week.' width='104' height='16'>");    
     ?>
     </p>
     
@@ -139,10 +135,10 @@ $max = $max['total'];
                     if ($i > 1) $imgSrc .= ",";
                     $imgSrc .= $value['week'][$i];
                 }
-                $imgSrc .= "&amp;chds=0,".$weekMax;
+                $imgSrc .= "&amp;chds=0,".$weekMaxByOneArtist;
                 $imgSrc .= "&amp;chf=bg,s,dddddd00";
                 $imgSrc  .= "&amp;chco=FF2863";
-                //$imgSrc .= dechex(Util::map($maxScrobbles, 0, $weekMax, 50, 255));
+                //$imgSrc .= dechex(Util::map($maxScrobbles, 0, $weekMaxByOneArtist, 50, 255));
                 echo "<li>";
                 print("<span class='playcount' title='That’s ".round($value['total']/$total, 4)."% of your total scrobbles this year.'>");
                 if (isset($value['bestOf'])) {
