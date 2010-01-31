@@ -32,8 +32,9 @@ for ($i=0; $i < count($list); $i++) {
             if (!isset($artists[$artist->name])) {
                 $artists[$artist->name] = array(
                     'total' => 0,
-                    'week' => array_fill(1, 52, 0),
                     'weekMax' => 0,
+                    'week' => array_fill(1, 52, 0),
+                    'bestOf' => null,
                 );
                 if ($year == 2009 && isset($bestof[$artist->name])) {
                     $artists[$artist->name]['bestOf'] = $bestof[$artist->name];
